@@ -1,0 +1,78 @@
+缓存过期之后，如果多个线程同时请求对某个数据的访问，会同时去到数据库，导致数据库瞬间负荷增高。Spring4.3为@Cacheable注解提供了一个新的参数“sync”（boolean类型，缺省为false），当设置它为true时，只有一个线程的请求会去到数据库，其他线程都会等待直到缓存可用。这个设置可以减少对数据库的瞬间并发访问。
+
+
+不过不一定所有的缓存系统都支持这个配置。经过验证，Guava Cache是支持的。验证过程如下：
+
+
+1、Guava Cache配置，参考：http://blog.csdn.net/clementad/article/details/51250472
+
+
+2、创建从数据库获取数据的类和方法，该方法使用@Cacheable注解：
+[java] view plain copy
+@Service
+public class UserServiceCacheablesImpl implements UserServiceCacheables{
+    private final static Logger logger = LoggerFactory.getLogger(UserServiceCacheablesImpl.class);
+
+    @Autowired
+    UserDAO userDAO;
+
+    @Override
+    @Cacheable(value="getPhoneNoByUserId")
+    public String getPhoneNoByUserId(int userId) {
+        logger.debug("getting data from database, userId={}", userId);
+        return userDAO.getPhoneNoByUserId(userId);
+    }
+}
+
+3、创建多线程并发的单元测试代码：
+[java] view plain copy
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class AdminApplicationTests {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    UserServiceCacheables userServiceCacheables;
+
+    /**
+     * 多线程并发测试
+     */
+    @Test
+    public void multiThreads() throws Exception{
+        int number = 3; //线程数
+        ExecutorService executorService = Executors.newFixedThreadPool(number);
+
+        List<Future<String>> results = new ArrayList<Future<String>>();
+        int userId = 26358;
+
+        for (int i=0; i < number; i++) { //非阻塞地启动number个线程，由Future接收结果
+            Future<String> future = executorService.submit(new MyThread(userId));
+            //Thread.sleep(300);
+            results.add(future);
+        }
+
+        for(Future<String> f : results){ //从Future中获取结果，打印出来
+            String phoneNo = f.get();
+            logger.debug(phoneNo);
+        }
+    }
+
+    class MyThread implements Callable<String>{
+        int userId;
+
+        public MyThread(int userId) {
+            this.userId = userId;
+        }
+
+        @Override
+        public String call() throws Exception {
+            return userServiceCacheables.getPhoneNoByUserId(userId);
+        }
+    }
+}
+
+4、测试结果：
+当设置3个并发线程的时候，会出现3个log：“getting data from database, userId=26358”，说明访问了3次数据库。
+当修改注解如下之后，只出现一次“getting data from database, userId=26358”，说明只访问了1次数据库，另外两次命中了缓存：
+[java] view plain copy
+@Cacheable(value="getPhoneNoByUserId", sync=true)
