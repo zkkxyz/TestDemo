@@ -1,0 +1,51 @@
+缓存浅析 一 常用的缓存技术
+1、常见的两种缓存
+本地缓存：不需要序列化，速度快，缓存的数量与大小受限于本机内存
+分布式缓存：需要序列化，速度相较于本地缓存较慢，但是理论上缓存的数量与大小无限（因为缓存机器可以不断扩展）
+
+2、本地缓存
+Google guava cache：当下最好用的本地缓存
+
+Ehcache：spring默认集成的一个缓存，以spring cache的底层缓存实现类形式去操作缓存的话，非常方便，但是欠缺灵活，如果想要灵活使用，还是要单独使用Ehcache
+Oscache：最经典简单的页面缓存
+3、分布式缓存
+memcached：分布式缓存的标配
+Redis：新一代的分布式缓存，有替代memcached的趋势
+3.1、memcached
+
+经典的一致性hash算法
+基于slab的内存模型有效防止内存碎片的产生（但同时也需要估计好启动参数，否则会浪费很多的内存）
+集群中机器之间互不通信（相较于Jboss cache等集群中机器之间的相互通信的缓存，速度更快<–因为少了同步更新缓存的开销，且更适合于大型分布式系统中使用）
+使用方便（这一点是相较于Redis在构建客户端的时候而言的，尽管redis的使用也不困难）
+很专一（专做缓存，这一点也是相较于Redis而言的）
+3.2、Redis
+
+可以存储复杂的数据结构（5种）
+strings–>即简单的key-value，就是memcached可以存储的唯一的一种形式，接下来的四种是memcached不能直接存储的四种格式（当然理论上可以先将下面的一些数据结构中的东西封装成对象，然后存入memcached，但是不推荐将大对象存入memcached，因memcached的单一value的最大存储为1M，可能即使采用了压缩算法也不够，即使够，可能存取的效率也不高，而redis的value最大为1G）
+hashs–>看做hashTable
+lists–>看做LinkedList
+sets–>看做hashSet，事实上底层是一个hashTable
+sorted sets–>底层是一个skipList
+有两种方式可以对缓存数据进行持久化
+RDB
+AOF
+事件调度
+发布订阅等
+
+4、集成缓存
+
+专指spring cache，spring cache自己继承了ehcache作为了缓存的实现类，我们也可以使用guava cache、memcached、redis
+自己来实现spring cache的底层。当然，spring cache可以根据实现类来将缓存存在本地还是存在远程机器上。
+
+5、页面缓存
+
+在使用jsp的时候，我们会将一些复杂的页面使用O scache进行页面缓存，使用非常简单，就是几个标签的事儿；但是，现在一般的企业，
+前台都会使用velocity、freemaker这两种模板引擎，本身速度就已经很快了，页面缓存使用的也就很少了。
+
+总结：
+在实际生产中，我们通常会使用guava cache做本地缓存+redis做分布式缓存+spring cache就集成缓存（底层使用redis来实现）的形式
+guava cache使用在更快的获取缓存数据，同时缓存的数据量并不大的情况
+spring cache集成缓存是为了简单便捷的去使用缓存（以注解的方式即可），使用redis做其实现类是为了可以存更多的数据在机器上
+redis缓存单独使用是为了弥补spring cache集成缓存的不灵活
+就我个人而言，如果需要使用分布式缓存，那么首先redis是必选的，因为在实际开发中，我们会缓存各种各样的数据类型，在使用了redis的同时，memcached就完全可以舍弃了，但是现在还有很多公司在同时使用memcached和redis两种缓存。
+接下来的介绍中，会介绍在分布式情况下guava cache、memcached、redis、spring cache的使用与原理。
