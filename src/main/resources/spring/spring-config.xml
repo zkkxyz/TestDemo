@@ -11,9 +11,7 @@
     <context:annotation-config/>
 
     <!--在spring-servlet.xml中只需要扫描所有带@Controller注解的类，在applicationContext中可以扫描所有其他带有注解的类（也可以过滤掉带@Controller注解的类）。-->
-    <context:component-scan base-package="com"/>
-
-    <context:component-scan base-package="com.zkk">
+    <context:component-scan base-package="com.demo.test.controller">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 </beans>
