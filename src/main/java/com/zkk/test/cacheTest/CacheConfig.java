@@ -1,17 +1,15 @@
 package com.zkk.test.cacheTest;
 
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 /**
  * Created by zhangkaikai on 2018/1/25 025 16:48 .
  */
-@Configuration
-@EnableCaching
+//@Configuration
+//@EnableCaching
 public class CacheConfig {
     public static final int DEFAULT_MAXSIZE = 50000;
     public static final int DEFAULT_TTL = 10;

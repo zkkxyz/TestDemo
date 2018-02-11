@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="Info" monitorInterval="5">
+    <Appenders>
+        <Console name="console-log" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss}|%p|%X{invokeNo}|%X{ip}|%X{userPin}|%30.30c|%m \n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="accessLog" level="debug" additivity="false">
+            <appender-ref ref="console-log" level="debug"/>
+        </Logger>
+        <Logger name="com.zkk.test" level="INFO" additivity="false">
+            <appender-ref ref="console-log" level="INFO"/>
+        </Logger>
+        <Root level="INFO" additivity="false">
+            <AppenderRef ref="console-log"/>
+        </Root>
+    </Loggers>
+</Configuration>
