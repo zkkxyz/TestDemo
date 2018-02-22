@@ -63,4 +63,12 @@ public class AccountService3Test {
         accountService3.getAccountByName("somebody1");
         accountService3.getAccountByName("somebody2");
     }
+
+    @Test
+    public void testMyCache(){
+        Account account = accountService3.getAccountByName("someone");
+        logger.info("passwd={}", account.getPassword());
+        account = accountService3.getAccountByName("someone");
+        logger.info("passwd={}", account.getPassword());
+    }
 }

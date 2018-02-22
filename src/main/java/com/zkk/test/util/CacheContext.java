@@ -7,6 +7,8 @@ import java.util.Map;
 
 /**
  * Created by zhangkaikai on 2018/2/11 011 11:21 .
+ * 缓存管理器，这个管理器负责实现缓存逻辑，
+ * 支持对象的增加、修改和删除，支持值对象的泛型。
  */
 @Component
 public class CacheContext<T> {

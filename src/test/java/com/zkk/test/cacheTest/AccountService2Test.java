@@ -1,5 +1,6 @@
 package com.zkk.test.cacheTest;
 
+import com.alibaba.fastjson.JSON;
 import com.zkk.test.service.AccountService2;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +32,10 @@ public class AccountService2Test {
     @Test
     public void testGetAccountByName() throws Exception {
         logger.info("first query...");
-        accountService2.getAccountByName("accountName");
+//        accountService2.getAccountByName("accountName");
+        System.out.println (JSON.toJSONString (accountService2.getAccountByName("accountName")));
 
         logger.info("second query...");
-        accountService2.getAccountByName("accountName");
+        System.out.println (JSON.toJSONString (accountService2.getAccountByName("accountName")));
     }
 }

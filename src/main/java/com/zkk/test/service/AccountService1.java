@@ -11,6 +11,11 @@ import javax.annotation.Resource;
 
 /**
  * Created by zhangkaikai on 2018/2/11 011 16:11 .
+ * 1.缓存代码和业务代码耦合度太高，如上面的例子，
+     AccountService 中的 getAccountByName（）方法中有了太多缓存的逻辑，不便于维护和变更
+    2.不灵活，这种缓存方案不支持按照某种条件的缓存，
+    比如只有某种类型的账号才需要缓存，这种需求会导致代码的变更
+    3.缓存的存储这块写的比较死，不能灵活的切换为使用第三方的缓存模块
  */
 @Service
 public class AccountService1 {
