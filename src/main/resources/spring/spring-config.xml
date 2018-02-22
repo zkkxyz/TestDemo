@@ -54,8 +54,10 @@
     <bean id="cacheManager" class="org.springframework.cache.support.CompositeCacheManager">
         <property name="cacheManagers">
             <list>
+                <!--当我们调用cacheManager.getCache(cacheName) 时，会先从第一个cacheManager中查找有没有cacheName的cache，
+                如果没有接着查找第二个，如果最后找不到，因为fallbackToNoOpCache=true，那么将返回一个NOP的Cache否则返回null-->
                 <ref bean="simpleCacheManager" />
-                <ref bean="guavaCacheManager" />
+                <!--<ref bean="guavaCacheManager" />-->
             </list>
         </property>
         <!--设置一个找不到缓存就不做任何操作的标志位-->
@@ -69,11 +71,5 @@
                 <value>dictTableCache</value>
             </list>
         </property>
-    </bean>
-    <!--设置guava cache缓存策略  生存期为24小时  最大100个缓存数-->
-    <bean id="defaultCacheBuilder"
-          class="com.google.common.cache.CacheBuilder"
-          factory-method="from">
-        <constructor-arg value="maximumSize=100, expireAfterWrite=24h"/>
     </bean>
 </beans>
