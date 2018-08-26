@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns:context="http://www.springframework.org/schema/context"
-            xmlns:cache="http://www.springframework.org/schema/cache"
-            xmlns:p="http://www.springframework.org/schema/p"
-            xsi:schemaLocation="http://www.springframework.org/schema/context
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
             http://www.springframework.org/schema/context/spring-context-4.0.xsd
             http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
             http://www.springframework.org/schema/cache
-            http://www.springframework.org/schema/cache/spring-cache-4.0.xsd"
-            default-lazy-init="false" default-autowire="byName">
+            http://www.springframework.org/schema/cache/spring-cache-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-lazy-init="false" default-autowire="byName">
 
     <context:annotation-config/>
 
@@ -72,4 +72,36 @@
             </list>
         </property>
     </bean>
+
+    <bean id="userService" class="com.zkk.test.aop.impl.UserServiceImpl"/>
+    <!-- 这个切面也要配置成bean-->
+    <bean id="log" class="com.zkk.test.aop.Log"/>
+    <bean id="logs" class="com.zkk.test.aop.LogS"/>
+    <bean id="logAspect" class="com.zkk.test.aop.LogAspect"/>
+
+    <bean id="afterLog" class="com.zkk.test.aop.AfterLog"></bean>
+    <aop:config>
+        <!--切入点，需要告诉方法在什么去执行
+        expression="execution(* com.spring.service.impl.*.*(..))"
+        第一个* 表示所有的返回值，然后就是包名
+        第二个*表示所有的类对象
+        第三个*表示类对象所有的方法
+        第四个*表示所有方法下面的带参数的方法或者是不带参数的方法
+        -->
+        <!--<aop:pointcut expression="execution(* com.zkk.test.aop.impl.*.*(..))" id="pointcut"/>-->
+        <!-- 在所有的方法中都切入前置通知-->
+        <!--<aop:advisor advice-ref="log" pointcut-ref="pointcut"/>-->
+
+        <!--<aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>-->
+
+
+        <!--<aop:aspect ref="logs">-->
+            <!--<aop:pointcut expression="execution(* com.zkk.test.aop.impl.*.*(..))" id="pointcut"/>-->
+            <!--<aop:before method="before" pointcut-ref="pointcut"/>-->
+            <!--<aop:after method="after" pointcut-ref="pointcut"/>-->
+        <!--</aop:aspect>-->
+
+
+    </aop:config>
+    <aop:aspectj-autoproxy/>
 </beans>
