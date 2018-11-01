@@ -65,12 +65,27 @@ public class ConversionUtil {
         return num;
     }
 
+    /**
+     * 遍历指定长度的密码
+     * @param minLength
+     * @param maxLength
+     */
+    public static void testPwd(int minLength,int maxLength){
+        for(int i=minLength;i<=maxLength;i++){
+            long maxNum = (long) Math.pow(62,i);
+            System.out.println (maxNum);
+            for(int j=0;j<maxNum;j++){
+                System.out.println (encode (j,i));
+            }
+        }
+    }
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println("62进制：" + encode(2576460752303423487L, 11));
-        System.out.println("10进制：" + decode("34KDUNMZwuV"));
+//        System.out.println("62进制：" + encode(2576460752303423487L, 11));
+//        System.out.println("10进制：" + decode("34KDUNMZwuV"));
+        testPwd(2,3);
     }
 }
